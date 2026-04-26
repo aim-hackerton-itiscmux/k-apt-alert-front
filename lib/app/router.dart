@@ -16,6 +16,7 @@ import '../features/preparation/presentation/preparation_page.dart';
 const _authRequiredRoutes = <String>{
   '/preparation',
   '/notifications',
+  '/my',
   // 신규 인증 화면 (mypage, documents, favorites, onboarding 등) 추가 시 등록
 };
 
