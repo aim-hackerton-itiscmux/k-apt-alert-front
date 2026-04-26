@@ -47,3 +47,6 @@ app.*.map.json
 # MCP server config (contains API keys — keep local)
 .mcp.json
 .mcp.local.json
+
+# Local Vercel project link (created by `vercel link` / `vercel pull`)
+.vercel/
