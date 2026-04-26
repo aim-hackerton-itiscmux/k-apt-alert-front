@@ -9,16 +9,25 @@ import '../features/auth/presentation/login_page.dart';
 import '../features/home/presentation/home_dashboard_page.dart';
 import '../features/my_cheongyak/presentation/score_tracker_page.dart';
 import '../features/notifications/presentation/notifications_page.dart';
+import '../features/onboarding/presentation/onboarding_flow.dart';
 import '../features/preparation/presentation/preparation_page.dart';
+import '../features/profile/presentation/mypage_page.dart';
 
 /// 인증 필요한 라우트 (Supabase 미설정 또는 미로그인 시 /login 으로 redirect).
 /// 무인증 라우트는 그대로 통과 (announcements, /home, /login, /auth/callback 등).
 const _authRequiredRoutes = <String>{
   '/preparation',
   '/notifications',
+  '/mypage',
   '/my',
-  // 신규 인증 화면 (mypage, documents, favorites, onboarding 등) 추가 시 등록
+  // 신규 인증 화면 (documents, favorites 등) 추가 시 등록
 };
+
+bool _needsAuth(String path) {
+  if (_authRequiredRoutes.contains(path)) return true;
+  if (path.startsWith('/onboarding/')) return true;
+  return false;
+}
 
 GoRouter buildRouter() {
   final authRepo = AuthRepository();
@@ -33,7 +42,7 @@ GoRouter buildRouter() {
       final goingTo = state.matchedLocation;
       final goingToLogin = goingTo == '/login';
       final goingToCallback = goingTo.startsWith('/auth/callback');
-      final needsAuth = _authRequiredRoutes.contains(goingTo);
+      final needsAuth = _needsAuth(goingTo);
 
       // 미로그인 + 인증 필요 → /login (next로 원래 경로 보존)
       if (!loggedIn && needsAuth && !goingToLogin && !goingToCallback) {
@@ -77,6 +86,17 @@ GoRouter buildRouter() {
       GoRoute(
         path: '/my',
         builder: (context, state) => const ScoreTrackerPage(),
+      ),
+      GoRoute(
+        path: '/mypage',
+        builder: (context, state) => const MypagePage(),
+      ),
+      GoRoute(
+        path: '/onboarding/:step',
+        builder: (context, state) {
+          final step = int.tryParse(state.pathParameters['step'] ?? '1') ?? 1;
+          return OnboardingFlow(step: step);
+        },
       ),
       GoRoute(
         path: '/notifications',
