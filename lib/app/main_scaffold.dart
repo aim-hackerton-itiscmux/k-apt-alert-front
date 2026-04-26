@@ -39,7 +39,7 @@ class MainScaffold extends StatelessWidget {
       label: '준비',
     ),
     _NavTabSpec(
-      route: '/my',
+      route: '/mypage',
       icon: Icons.person_outline,
       activeIcon: Icons.person,
       label: '내 청약',
