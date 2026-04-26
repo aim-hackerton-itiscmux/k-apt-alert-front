@@ -9,6 +9,13 @@
 #   API_BASE_URL  Override the API base URL at build time.
 set -euo pipefail
 
+# If GitHub Actions (or another CI) already produced build/web, skip the
+# Flutter download + rebuild and just let Vercel package the prebuilt output.
+if [ -f "build/web/index.html" ]; then
+  echo "==> build/web/index.html exists — skipping Flutter build (prebuilt by CI)."
+  exit 0
+fi
+
 FLUTTER_VERSION="${FLUTTER_VERSION:-3.41.7}"
 FLUTTER_HOME="${FLUTTER_HOME:-$HOME/flutter}"
 FLUTTER_TAR_URL="https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_${FLUTTER_VERSION}-stable.tar.xz"
