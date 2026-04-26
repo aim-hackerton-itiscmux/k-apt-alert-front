@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# Vercel build script for Flutter web.
+# - Downloads a pinned Flutter SDK tarball (faster than git clone + precache).
+# - Builds the web release with API_BASE_URL injected via --dart-define.
+#
+# Required env vars on Vercel:
+#   (none required — API_BASE_URL is optional, defaults to live Supabase URL)
+# Optional env vars:
+#   API_BASE_URL  Override the API base URL at build time.
+set -euo pipefail
+
+FLUTTER_VERSION="${FLUTTER_VERSION:-3.41.7}"
+FLUTTER_HOME="${FLUTTER_HOME:-$HOME/flutter}"
+FLUTTER_TAR_URL="https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_${FLUTTER_VERSION}-stable.tar.xz"
+
+if [ ! -x "$FLUTTER_HOME/bin/flutter" ]; then
+  echo "==> Downloading Flutter $FLUTTER_VERSION..."
+  TMP_TAR="$(mktemp -t flutter-XXXXXX.tar.xz)"
+  curl -fSL --retry 3 "$FLUTTER_TAR_URL" -o "$TMP_TAR"
+  mkdir -p "$(dirname "$FLUTTER_HOME")"
+  tar -xJf "$TMP_TAR" -C "$(dirname "$FLUTTER_HOME")"
+  rm -f "$TMP_TAR"
+fi
+
+export PATH="$FLUTTER_HOME/bin:$PATH"
+
+flutter --version
+flutter config --enable-web
+flutter pub get
+
+API_BASE_URL_VALUE="${API_BASE_URL:-https://xnyhzyvigazofjoozuub.supabase.co/functions/v1}"
+echo "==> Building web release"
+echo "    API_BASE_URL=$API_BASE_URL_VALUE"
+flutter build web \
+  --release \
+  --dart-define=API_BASE_URL="$API_BASE_URL_VALUE"
+
+echo "==> Build complete: build/web"
