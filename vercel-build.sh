@@ -22,6 +22,11 @@ if [ ! -x "$FLUTTER_HOME/bin/flutter" ]; then
   rm -f "$TMP_TAR"
 fi
 
+# Vercel runs builds as root; git refuses to operate on Flutter's repo
+# unless the path is whitelisted as a safe directory.
+git config --global --add safe.directory "$FLUTTER_HOME" || true
+git config --global --add safe.directory '*' || true
+
 export PATH="$FLUTTER_HOME/bin:$PATH"
 
 flutter --version
