@@ -5,6 +5,7 @@ import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app/router.dart';
+import 'core/api/api_client.dart';
 import 'core/config/supabase_config.dart';
 import 'core/theme/app_theme.dart';
 
@@ -36,6 +37,18 @@ class KAptAlertApp extends StatefulWidget {
 
 class _KAptAlertAppState extends State<KAptAlertApp> {
   late final _router = buildRouter();
+
+  @override
+  void initState() {
+    super.initState();
+    _pingBackend();
+  }
+
+  void _pingBackend() {
+    final client = ApiClient();
+    client.getJson('/health').catchError((_) {});
+    client.getJson('/cache-status').catchError((_) {});
+  }
 
   @override
   Widget build(BuildContext context) {
