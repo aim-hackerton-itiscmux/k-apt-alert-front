@@ -29,10 +29,21 @@ flutter config --enable-web
 flutter pub get
 
 API_BASE_URL_VALUE="${API_BASE_URL:-https://xnyhzyvigazofjoozuub.supabase.co/functions/v1}"
+SUPABASE_URL_VALUE="${SUPABASE_URL:-https://xnyhzyvigazofjoozuub.supabase.co}"
+SUPABASE_ANON_KEY_VALUE="${SUPABASE_ANON_KEY:-}"
+AUTH_REDIRECT_URL_VALUE="${AUTH_REDIRECT_URL:-}"
+
 echo "==> Building web release"
 echo "    API_BASE_URL=$API_BASE_URL_VALUE"
+echo "    SUPABASE_URL=$SUPABASE_URL_VALUE"
+echo "    SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY_VALUE:+[set]}${SUPABASE_ANON_KEY_VALUE:-[not set — Auth disabled]}"
+echo "    AUTH_REDIRECT_URL=${AUTH_REDIRECT_URL_VALUE:-[default site url]}"
+
 flutter build web \
   --release \
-  --dart-define=API_BASE_URL="$API_BASE_URL_VALUE"
+  --dart-define=API_BASE_URL="$API_BASE_URL_VALUE" \
+  --dart-define=SUPABASE_URL="$SUPABASE_URL_VALUE" \
+  --dart-define=SUPABASE_ANON_KEY="$SUPABASE_ANON_KEY_VALUE" \
+  --dart-define=AUTH_REDIRECT_URL="$AUTH_REDIRECT_URL_VALUE"
 
 echo "==> Build complete: build/web"

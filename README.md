@@ -47,6 +47,26 @@ flutter run -d chrome \
 기본 API Base URL은 `lib/core/config/api_config.dart` 에 하드코딩된 라이브 Supabase
 주소를 사용한다. 빌드 시 `--dart-define=API_BASE_URL=...` 로 덮어쓸 수 있다.
 
+## Auth (매직링크 로그인)
+
+인증 API (profile / my-score / reports / documents / preparation / favorites / notifications)
+사용 시 Supabase Auth 매직링크 로그인 필요. 미설정 시 무인증 API만 동작.
+
+```bash
+flutter run -d chrome \
+  --dart-define=SUPABASE_URL=https://xnyhzyvigazofjoozuub.supabase.co \
+  --dart-define=SUPABASE_ANON_KEY=<your_anon_key> \
+  --dart-define=AUTH_REDIRECT_URL=http://localhost:54080/auth/callback
+```
+
+| Env var | 설명 | 기본값 |
+|---------|------|------|
+| `SUPABASE_URL` | Supabase 프로젝트 URL | `https://xnyhzyvigazofjoozuub.supabase.co` |
+| `SUPABASE_ANON_KEY` | Supabase anon (public) key | (비어있으면 Auth 비활성) |
+| `AUTH_REDIRECT_URL` | 매직링크 콜백 URL | (Supabase Site URL 설정) |
+
+→ `/login` 진입 시 매직링크 발송. 이메일 클릭 → 자동 로그인 → 원래 페이지로 redirect.
+
 ## 검증 명령
 
 ```bash

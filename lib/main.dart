@@ -2,12 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app/router.dart';
+import 'core/config/supabase_config.dart';
 import 'core/theme/app_theme.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   usePathUrlStrategy();
+
+  // Supabase 초기화 — anon key 설정된 경우만. 미설정 시 Auth 비활성.
+  // 빌드 시 --dart-define=SUPABASE_ANON_KEY=... 로 주입.
+  if (SupabaseConfig.isConfigured) {
+    await Supabase.initialize(
+      url: SupabaseConfig.url,
+      anonKey: SupabaseConfig.anonKey,
+      authOptions: const FlutterAuthClientOptions(
+        authFlowType: AuthFlowType.pkce,
+      ),
+    );
+  }
+
   runApp(const ProviderScope(child: KAptAlertApp()));
 }
 
